@@ -3,4 +3,4 @@ import shutil
 import os
 # shutil.copytree（ResDir,DesDir）#拷贝
 # shutil.rmtree(Dir)#删除
-shutil.rmtree('C:\Users\haish\Desktop\makedir','C:\Users\haish\Desktop\makedir\20170101')
+shutil.rmtree(r'C:\Users\haish\Desktop\gitcheck\tools\20170102')
