@@ -3,7 +3,7 @@
 20170901-20171231
 '''
 import os
-import datetime
+from datetime import * 
 import time
 def dateRange(start, end): 
     days = (datetime.datetime.strptime(end, "%Y-%m-%d") - datetime.datetime.strptime(start, "%Y-%m-%d")).days + 1 
@@ -11,6 +11,7 @@ def dateRange(start, end):
 if __name__ == '__main__':
     for i in dateRange("2017-01-01", "2017-12-31"):
         os.mkdir(i)
+        
     
 
 
