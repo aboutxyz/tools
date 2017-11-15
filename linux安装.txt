@@ -1,0 +1,199 @@
+centos安装全过程
+
+
+1.小内存VPS
+利用Linux的swap交换分区虚拟部分硬盘当内存来使用
+dd if=/dev/zero of=/swapfile bs=1M count=1024
+mkswap /swapfile
+swapon /swapfile
+vi /etc/fstab
+打开fstab文件新建一行写入:
+/swapfile swap swap defaults 0 0
+
+1.安装LNMP：
+yum install screen
+screen -S lnmp
+wget -c http://soft.vpser.net/lnmp/lnmp1.2-full.tar.gz && tar zxf lnmp1.2-full.tar.gz && cd lnmp1.2-full && ./install.sh lnmp
+wget -c http://mirrors.duapp.com/lnmp/lnmp1.2-full.tar.gz && tar zxf lnmp1.2-full.tar.gz && cd lnmp1.2-full && ./install.sh lnmp
+网络掉线可以screen -r lnmp
+
+2.安装pip
+sudo yum -y install epel-release
+sudo yum -y install python-pip
+sudo yum clean all
+
+3.安装MySQL-python
+yum install mysql-devel
+yum install gcc python-devel
+pip install MySQL-python
+
+4.安装python所需类库
+pip install -r requirements.txt
+生成是pip freeze > requirements.txt
+
+
+5.关闭防火墙
+systemctl stop firewalld.service
+systemctl disable firewalld.service
+打开
+systemctl start firewalld.service
+systemctl restart firewalld.service
+开放端口
+firewall-cmd --zone=public --add-port=80/tcp --permanent
+firewall-cmd --zone=public --add-port=8888/tcp --permanent
+firewall-cmd --zone=public --add-port=9988/tcp --permanent
+firewall-cmd --zone=public --add-port=7777/tcp --permanent
+firewall-cmd --zone=public --add-port=7799/tcp --permanent
+firewall-cmd --reload
+
+6.关闭selinux
+vi /etc/selinux/config，将SELINU置为disabled
+
+7.修改nginx配置
+
+8.添加定时任务
+crontab -e
+
+9.supervisord -c supervisor.conf
+
+10.显示shell的路径
+vim ~/.bash_profile  没有的话新建也可以
+export PS1='[\u@\h \W]\$'  添加
+source ~/.bash_profile   执行
+
+11.ss安装
+yum install epel-release
+yum update
+yum install python-setuptools m2crypto supervisor
+easy_install pip
+pip install shadowsocks
+
+vi /etc/shadowsocks.json
+
+{
+"server":"0.0.0.0",
+"server_port":9988,
+"local_port":1080,
+"password":"900502",
+"timeout":600,
+"method":"aes-256-cfb"
+}
+
+
+锐速XX的安装
+rpm -ivh http://soft.91yun.org/ISO/Linux/CentOS/kernel/kernel-3.10.0-229.1.2.el7.x86_64.rpm --force
+wget -N --no-check-certificate https://raw.githubusercontent.com/91yun/serverspeeder/master/serverspeeder-all.sh && bash serverspeeder-all.sh
+卸载
+chattr -i /serverspeeder/etc/apx* && /serverspeeder/bin/serverSpeeder.sh uninstall -f
+状态
+/serverspeeder/bin/serverSpeeder.sh status
+
+12.mysql设置远程连接
+use mysql
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '900502' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO 'web'@'%' IDENTIFIED BY 'web' WITH GRANT OPTION;
+flush privileges;
+select host,user from user;
+
+
+13.linux命令
+sudo passwd root 设置root密码
+uname -a   查看主机名、系统版本等
+rpm -qa 查看安装的软件
+hostnamectl set-hostname <主机名>  修改主机名
+shutdown -h now  立刻关机
+netstat -lnp|grep 查看端口占用
+ps -ef |grep ps aux | grep apt-get
+/etc/init.d/mysql start 脚本启动mysql
+set password for 'root'@'localhost'=password('900502');
+set password for 'web'@'localhost'=password('web');
+select User from user; 查看所有数据库用户
+show databases;
+use mysql;
+show tables;
+sync; echo 3 > /proc/sys/vm/drop_caches  释放网页缓存，目录项和索引（To free pagecache, dentries and inodes）:
+
+alias ex1='cd chapter3/section5'
+vim ~/.bashrc
+source ~/.bashrc
+
+但是vim ~/.zshrc
+source ~/.zshrc
+直接执行ex1就可以执行
+
+
+14.windows git 使用及注意事项
+git config --global core.autocrlf false
+git config --global core.safecrlf true
+git config --global http.proxy 'socks5://127.0.0.1:1080'
+git config --global https.proxy 'socks5://127.0.0.1:1080'
+1.git init
+2.git add .
+3.git commit -m "wrote a readme file"
+4.git log --pretty=oneline    看日志
+5.git reset --hard HEAD^  回退到上一个版本
+6.git reset --hard 3628164   回退到某一个commit id
+7.git reflog 查看每一条命令
+8.git checkout -- readme.txt  让这个文件回到最近一次git commit或git add时的状态
+9.git reset HEAD readme.txt  把暂存区的修改撤销掉（unstage），重新放回工作区
+10.git rm test.txt 
+   git commit
+11.ssh-keygen -t rsa -C "haishangmuxucao@dlmu.edu.cn" 
+   在.ssh中找到id_rsa.pub，复制到github
+	ssh git@github.com测试
+12.git remote add origin git@github.com:aboutxyz/t66y.git
+git push -u origin master
+后面用git push origin master
+13.git clone git@github.com:aboutxyz/t66y.git
+
+
+15.报错汇总
+1.MySQL is not running, but lock file (/var/lock/subsys/mysql[FAILED]
+try using the unix lsof command to see which program has the lock
+
+lsof | grep mysql
+EDIT:in fact, run lsof on the lock itself
+
+lsof /var/lock/subsys/mysql
+然后重新启动MySQL service mysql start
+
+也有可能是日志文件过多，删除日志文件并关闭日志
+
+16.SSH 登陆
+ssh-keygen -t rsa
+将A机器的公钥  ssh-copy-id user@host 复制到远程机器B上，即可从A登陆B
+
+17.设置mail
+yum install mailx
+
+vi /etc/mail.rc
+填写以下内容
+set bsdcompat
+set smtp-use-starttls #启用ssl加密
+set ssl-verify=ignore
+set nss-config-dir=/etc/ssl/certs #ssl的加密证书
+set smtp=smtp.qq.com  #smtp服务器地址
+set smtp-auth-user=********* #登录邮箱帐号，不用加@qq.com或者@aliyun.com，等，如此类推
+set smtp-auth-password=*********   #smtp服务器的授权密码
+set smtp-auth=login   #需要登录认证
+set from=**********@qq.com  #发件人
+
+获取证书：
+echo -n | openssl s_client -connect smtp.qq.com:465 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > /etc/ssl/certs/qq.crt
+
+certutil -A -n "GeoTrust SSL CA" -t "C,," -d /etc/ssl/certs -i /etc/ssl/certs/qq.crt
+
+certutil -A -n "GeoTrust Global CA" -t "C,," -d /etc/ssl/certs -i /etc/ssl/certs/qq.crt
+
+certutil -L -d /etc/ssl/certs/qq.crt  #这一步会报错
+
+ssl的证书的获得还可以在ubuntu的操作系统的 ~/.mozilla/firefox/*****.default/   拷贝三个文件cert8.db，key3.db，secmod.db到centos7下的/etc/ssl/certs目录下即可
+
+报错：Error in certificate: Peer's certificate issuer is not recognized.
+certutil -A -n "GeoTrust SSL CA - G3" -t "Pu,Pu,Pu"  -d ./ -i qq.crt
+
+发送邮件
+echo "test" | mailx -s "title"  test@test.com
+
+
+

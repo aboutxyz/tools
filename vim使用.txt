@@ -1,0 +1,11 @@
+vim ~/.vimrc
+º”“ª–– set number
+:wq 
+
+
+u
+
+gj gk
+
+gg
+G

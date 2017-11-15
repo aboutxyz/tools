@@ -1,0 +1,18 @@
+docker-machine -s "D:\dockercache" create --engine-registry-mirror=https://7or2xw96.mirror.aliyuncs.com -d virtualbox default
+
+
+docker-machine env default
+        eval "$(docker-machine env default)"
+        docker info
+
+
+docker run --name web_dev -it -p 9000:9000 -p 3141:3141 -p 5000:5000 dongweiming/web_develop /bin/zsh
+
+
+
+docker-machine inspect|grep MachineName
+
+for port in 3141 5000 9000
+do
+VBoxManage controlvm "default" natpf1 "tcp-port$port,tcp,127.0.0.1,$port,,$port";echo $port
+done

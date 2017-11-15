@@ -1,0 +1,59 @@
+CREATE USER 'username'@'host' IDENTIFIED BY 'password'; 
+CREATE USER 'muxucao'@'%' IDENTIFIED BY '900502'; 
+grant all privileges on socket.* to muxucao@'%' identified by '900502';
+flush privileges;
+set password for 'root'@'localhost'=password('900502');
+set password for 'muxucao'@'%'=password('900502');
+update mysql.user set password=password('900502') where User="muxucao" and Host="localhost";
+drop user 用户名@'%';
+
+删除空用户
+use mysql   #选择mysql库
+
+delete from user where User='';  #删除账号为空的行
+flush privileges;  #刷新权限
+exit  #退出mysql
+
+
+CREATE TABLE Client(
+ip VARCHAR(255),
+time VARCHAR(255),
+text VARCHAR(255)
+);
+
+CREATE TABLE Server(
+ip VARCHAR(255),
+time VARCHAR(255),
+text VARCHAR(255)
+);
+
+
+desc 表名;
+show columns from 表名;
+describe 表名;
+show create table 表名;
+
+use information_schema
+select * from columns where table_name='表名';
+
+
+先 use 数据库名;
+然后:
+alter table customers rename custs;
+alter table client rename Client;
+
+
+
+# cat << EOF > /etc/apt/sources.list
+deb http://mirrors.aliyun.com/ubuntu/ xenial main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ xenial-proposed main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ xenial main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ xenial-proposed main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse
+EOF
+# apt-get update # 修改源之后一定要更新
